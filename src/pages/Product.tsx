@@ -1,32 +1,43 @@
 import { useState } from 'react'
+import { useParams, Link } from 'react-router-dom'
 import Layout from '../components/Layout'
+import { useCartStore } from '../stores/cartStore'
+import { getProductById } from '../services/productData'
 import './Product.css'
 
-const productData = {
-  id: '1',
-  name: 'Crystal Black Bag',
-  price: 1850,
-  description: 'A timeless luxury handbag crafted with meticulous attention to detail. Made from premium black leather with hand-finished edges and gold-plated hardware.',
-  image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=800&h=800&fit=crop',
-  images: [
-    'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=800&h=800&fit=crop',
-    'https://images.unsplash.com/photo-1590736969955-71cc94901144?w=800&h=800&fit=crop',
-    'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&h=800&fit=crop',
-  ],
-  details: [
-    'Material: Genuine leather',
-    'Hardware: 24k gold-plated',
-    'Dimensions: 35cm × 25cm × 12cm',
-    'Weight: 1.2kg',
-    'Interior: Silk lining with zippered pocket',
-    'Care: Professional leather cleaning recommended',
-  ],
-  inStock: true,
-}
-
 export default function ProductPage() {
+  const { id } = useParams<{ id: string }>()
+  const { addItem } = useCartStore()
   const [quantity, setQuantity] = useState(1)
   const [selectedImage, setSelectedImage] = useState(0)
+  const [showAddedMessage, setShowAddedMessage] = useState(false)
+
+  const productData = id ? getProductById(id) : null
+
+  if (!productData) {
+    return (
+      <Layout>
+        <section className="product-section">
+          <div className="container">
+            <div className="product-not-found">
+              <h1>Product not found</h1>
+              <p>The product you're looking for doesn't exist.</p>
+              <Link to="/catalog" className="back-link">Back to Catalog</Link>
+            </div>
+          </div>
+        </section>
+      </Layout>
+    )
+  }
+
+  const handleAddToCart = () => {
+    addItem(productData.id, quantity)
+    setShowAddedMessage(true)
+    setTimeout(() => setShowAddedMessage(false), 2000)
+  }
+
+  // Use the product image as the only image for now
+  const images = [productData.image, productData.image, productData.image]
 
   return (
     <Layout>
@@ -35,10 +46,10 @@ export default function ProductPage() {
           <div className="product-layout">
             <div className="product-images">
               <div className="main-image">
-                <img src={productData.images[selectedImage]} alt={productData.name} />
+                <img src={images[selectedImage]} alt={productData.name} />
               </div>
               <div className="thumbnail-images">
-                {productData.images.map((image, index) => (
+                {images.map((image, index) => (
                   <button
                     key={index}
                     className={`thumbnail ${selectedImage === index ? 'active' : ''}`}
@@ -61,8 +72,8 @@ export default function ProductPage() {
               </div>
 
               <div className="product-status">
-                {productData.inStock ? (
-                  <span className="in-stock">In Stock</span>
+                {productData.stock > 0 ? (
+                  <span className="in-stock">In Stock ({productData.stock} available)</span>
                 ) : (
                   <span className="out-of-stock">Out of Stock</span>
                 )}
@@ -73,10 +84,10 @@ export default function ProductPage() {
                   <label htmlFor="quantity">Quantity</label>
                   <div className="quantity-input">
                     <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>−</button>
-                    <input 
+                    <input
                       id="quantity"
-                      type="number" 
-                      min="1" 
+                      type="number"
+                      min="1"
                       value={quantity}
                       onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
                     />
@@ -86,7 +97,13 @@ export default function ProductPage() {
               </div>
 
               <div className="product-actions">
-                <button className="add-to-cart">Add to Cart</button>
+                <button
+                  className="add-to-cart"
+                  onClick={handleAddToCart}
+                  disabled={productData.stock === 0}
+                >
+                  {showAddedMessage ? '✓ Added to Cart' : 'Add to Cart'}
+                </button>
                 <button className="wishlist-button" aria-label="Add to wishlist">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
@@ -97,9 +114,9 @@ export default function ProductPage() {
               <div className="product-specifications">
                 <h3>Details</h3>
                 <ul>
-                  {productData.details.map((detail, index) => (
-                    <li key={index}>{detail}</li>
-                  ))}
+                  <li>Product ID: {productData.id}</li>
+                  <li>Price: ${productData.price.toFixed(2)}</li>
+                  <li>Stock: {productData.stock} available</li>
                 </ul>
               </div>
 

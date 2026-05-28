@@ -1,78 +1,20 @@
 import Layout from '../components/Layout'
 import Hero from '../components/Hero'
 import ProductGrid from '../components/ProductGrid'
+import { PRODUCTS } from '../services/productData'
 import './Catalog.css'
 
-const allProducts = [
-  {
-    id: '1',
-    name: 'Crystal Black Bag',
-    price: 1850,
-    image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&h=600&fit=crop',
-    badge: 'New',
-  },
-  {
-    id: '2',
-    name: 'Minimal Leather Tote',
-    price: 1650,
-    image: 'https://images.unsplash.com/photo-1590736969955-71cc94901144?w=600&h=600&fit=crop',
-  },
-  {
-    id: '3',
-    name: 'Textured Crossbody',
-    price: 1450,
-    image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&h=600&fit=crop',
-  },
-  {
-    id: '4',
-    name: 'Modern Clutch',
-    price: 950,
-    image: 'https://images.unsplash.com/photo-1590736969955-71cc94901144?w=600&h=600&fit=crop',
-  },
-  {
-    id: '5',
-    name: 'Woven Handle Bag',
-    price: 1750,
-    image: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&h=600&fit=crop',
-    badge: 'New',
-  },
-  {
-    id: '6',
-    name: 'Sleek Crossbody',
-    price: 1350,
-    image: 'https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=600&h=600&fit=crop',
-    badge: 'New',
-  },
-  {
-    id: '7',
-    name: 'Classic Hobo',
-    price: 1550,
-    image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&h=600&fit=crop',
-  },
-  {
-    id: '8',
-    name: 'Elegant Evening Bag',
-    price: 1200,
-    image: 'https://images.unsplash.com/photo-1590736969955-71cc94901144?w=600&h=600&fit=crop',
-  },
-  {
-    id: '9',
-    name: 'Vintage Satchel',
-    price: 1900,
-    image: 'https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600&h=600&fit=crop',
-  },
-  {
-    id: '10',
-    name: 'Structured Bag',
-    price: 1600,
-    image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&h=600&fit=crop',
-  },
-]
-
 export default function CatalogPage() {
+  // Rotate products to create more variety for display
+  const allProducts = [
+    ...PRODUCTS.map(p => ({ ...p, badge: p.id === '1' ? 'New' : undefined })),
+    ...PRODUCTS.map(p => ({ ...p, id: `${p.id}-alt`, badge: undefined })),
+    ...PRODUCTS.map(p => ({ ...p, id: `${p.id}-alt2`, badge: p.id === '2' ? 'New' : undefined })),
+  ]
+
   return (
     <Layout>
-      <Hero 
+      <Hero
         title="Our Collection"
         subtitle="Explore our curated selection of luxury handbags"
       />

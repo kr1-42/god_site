@@ -1,11 +1,22 @@
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
 import './Header.css'
 
 export default function Header() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen)
+  }
+
+  const closeMenu = () => {
+    setIsMenuOpen(false)
+  }
+
   return (
     <header className="header">
       <div className="header-content">
-        <button className="menu-toggle" aria-label="Menu">
+        <button className="menu-toggle" aria-label="Menu" onClick={toggleMenu} aria-expanded={isMenuOpen}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -14,7 +25,7 @@ export default function Header() {
         </button>
 
         <Link to="/" className="logo">
-          mlouye
+          <img src="/attachments/logo.jpg" alt="mlouye" className="logo-image" />
         </Link>
 
         <nav className="nav-menu">
@@ -22,6 +33,14 @@ export default function Header() {
           <Link to="/catalog" className="nav-link">New</Link>
           <Link to="/catalog" className="nav-link">About</Link>
         </nav>
+
+        {isMenuOpen && (
+          <nav className="mobile-menu">
+            <Link to="/catalog" className="mobile-nav-link" onClick={closeMenu}>Shop</Link>
+            <Link to="/catalog" className="mobile-nav-link" onClick={closeMenu}>New</Link>
+            <Link to="/catalog" className="mobile-nav-link" onClick={closeMenu}>About</Link>
+          </nav>
+        )}
 
         <div className="header-actions">
           <button className="icon-button" aria-label="Search">

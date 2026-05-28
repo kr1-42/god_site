@@ -1,27 +1,42 @@
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
 import Layout from '../components/Layout'
+import { useCartStore } from '../stores/cartStore'
+import { Product } from '../types'
+import { getProductById } from '../services/productData'
 import './Cart.css'
 
 export default function CartPage() {
-  // Mock cart data
-  const cartItems = [
-    {
-      id: '1',
-      name: 'Crystal Black Bag',
-      price: 1850,
-      quantity: 1,
-      image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=200&h=200&fit=crop',
-    },
-    {
-      id: '2',
-      name: 'Minimal Leather Tote',
-      price: 1650,
-      quantity: 1,
-      image: 'https://images.unsplash.com/photo-1590736969955-71cc94901144?w=200&h=200&fit=crop',
-    },
-  ]
+  const { items, removeItem, updateQuantity } = useCartStore()
+  const [quantities, setQuantities] = useState<Record<string, number>>(
+    Object.fromEntries(items.map(item => [item.productId, item.quantity]))
+  )
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  const cartItemsWithProduct: (Product & { quantity: number })[] = items
+    .map(item => {
+      const product = getProductById(item.productId)
+      if (product) {
+        return { ...product, quantity: quantities[item.productId] || item.quantity }
+      }
+      return null
+    })
+    .filter((item): item is Product & { quantity: number } => item !== null)
+
+  const handleQuantityChange = (productId: string, newQuantity: number) => {
+    if (newQuantity > 0) {
+      setQuantities(prev => ({ ...prev, [productId]: newQuantity }))
+      updateQuantity(productId, newQuantity)
+    }
+  }
+
+  const handleRemove = (productId: string) => {
+    removeItem(productId)
+    const newQuantities = { ...quantities }
+    delete newQuantities[productId]
+    setQuantities(newQuantities)
+  }
+
+  const subtotal = cartItemsWithProduct.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const shipping = 50
   const total = subtotal + shipping
 
@@ -31,10 +46,10 @@ export default function CartPage() {
         <div className="container">
           <h1>Shopping Cart</h1>
 
-          {cartItems.length > 0 ? (
+          {cartItemsWithProduct.length > 0 ? (
             <div className="cart-layout">
               <div className="cart-items">
-                {cartItems.map(item => (
+                {cartItemsWithProduct.map(item => (
                   <div key={item.id} className="cart-item">
                     <div className="cart-item-image">
                       <img src={item.image} alt={item.name} />
@@ -44,12 +59,21 @@ export default function CartPage() {
                       <p className="item-price">${item.price.toFixed(2)}</p>
                     </div>
                     <div className="cart-item-quantity">
-                      <input type="number" min="1" defaultValue={item.quantity} />
+                      <input
+                        type="number"
+                        min="1"
+                        value={item.quantity}
+                        onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value) || 1)}
+                      />
                     </div>
                     <div className="cart-item-total">
                       ${(item.price * item.quantity).toFixed(2)}
                     </div>
-                    <button className="remove-button" aria-label="Remove item">
+                    <button
+                      className="remove-button"
+                      aria-label="Remove item"
+                      onClick={() => handleRemove(item.id)}
+                    >
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
