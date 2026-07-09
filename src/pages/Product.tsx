@@ -112,6 +112,8 @@ export default function ProductPage() {
                 </button>
               </div>
 
+              <Link to="/cart" className="go-to-cart">Go to Cart</Link>
+
               <div className="product-specifications">
                 <h3>Details</h3>
                 <ul>
