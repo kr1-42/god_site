@@ -1,24 +1,10 @@
-.promo-banner {
-  background-color: var(--secondary-gray);
-  padding: var(--spacing-lg) 0;
-  text-align: center;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.promo-banner p {
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  color: var(--text-dark);
-}
-
-.carousel-section {
-  overflow: hidden;
+.home-section {
+  padding: var(--spacing-3xl) 0;
 }
 
 .section-header {
-  margin-bottom: var(--spacing-3xl);
-  text-align: center;
+  margin-bottom: var(--spacing-2xl);
+  text-align: left;
 }
 
 .section-kicker {
@@ -35,38 +21,16 @@
   letter-spacing: -0.01em;
 }
 
-.carousel-shell {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(260px, 320px);
-  gap: var(--spacing-lg);
-  overflow-x: auto;
-  padding-bottom: var(--spacing-md);
-  scroll-snap-type: x mandatory;
-  scrollbar-width: thin;
-}
-
-.carousel-item {
-  scroll-snap-align: start;
-}
-
-.carousel-note {
-  text-align: center;
-  margin-top: var(--spacing-lg);
-  font-size: 14px;
-  color: #666;
-}
-
 @media (max-width: 768px) {
+  .home-section {
+    padding: var(--spacing-2xl) 0;
+  }
+
   .section-header {
-    margin-bottom: var(--spacing-2xl);
+    margin-bottom: var(--spacing-xl);
   }
 
   .section-header h2 {
     font-size: 28px;
-  }
-
-  .carousel-shell {
-    grid-auto-columns: minmax(240px, 280px);
   }
 }

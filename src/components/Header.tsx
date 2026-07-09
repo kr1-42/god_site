@@ -5,6 +5,8 @@ import './Header.css'
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isShopDropdownOpen, setIsShopDropdownOpen] = useState(false)
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
 
@@ -14,6 +16,19 @@ export default function Header() {
 
   const closeMenu = () => {
     setIsMenuOpen(false)
+  }
+
+  const toggleSearch = () => {
+    setIsSearchOpen(!isSearchOpen)
+  }
+
+  const handleSearchSubmit = (event: React.FormEvent) => {
+    event.preventDefault()
+    const query = searchQuery.trim()
+    if (!query) return
+    navigate(`/catalog?search=${encodeURIComponent(query)}`)
+    setIsSearchOpen(false)
+    setSearchQuery('')
   }
 
   const handleShopFilter = (category: 'dogs' | 'bags' | 'all') => {
@@ -87,7 +102,7 @@ export default function Header() {
             )}
           </div>
           <Link to="/catalog" className="nav-link">New</Link>
-          <Link to="/catalog" className="nav-link">About</Link>
+          <Link to="/about" className="nav-link">About</Link>
         </nav>
 
         {isMenuOpen && (
@@ -144,21 +159,32 @@ export default function Header() {
               )}
             </div>
             <Link to="/catalog" className="mobile-nav-link" onClick={closeMenu}>New</Link>
-            <Link to="/catalog" className="mobile-nav-link" onClick={closeMenu}>About</Link>
+            <Link to="/about" className="mobile-nav-link" onClick={closeMenu}>About</Link>
           </nav>
         )}
 
         <div className="header-actions">
-          <button className="icon-button" aria-label="Search">
+          {isSearchOpen && (
+            <form className="search-form" onSubmit={handleSearchSubmit}>
+              <input
+                type="search"
+                className="search-input"
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                autoFocus
+              />
+            </form>
+          )}
+          <button
+            className={`icon-button ${isSearchOpen ? 'active' : ''}`}
+            aria-label="Search"
+            aria-expanded={isSearchOpen}
+            onClick={toggleSearch}
+          >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="11" cy="11" r="8"></circle>
               <path d="m21 21-4.35-4.35"></path>
-            </svg>
-          </button>
-          <button className="icon-button" aria-label="Account">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
             </svg>
           </button>
           <Link to="/cart" className="icon-button" aria-label="Cart">

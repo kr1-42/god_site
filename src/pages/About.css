@@ -1,0 +1,19 @@
+.about-section {
+  padding: var(--spacing-3xl) 0;
+}
+
+.about-content {
+  max-width: 640px;
+}
+
+.about-content p {
+  margin-bottom: var(--spacing-lg);
+  line-height: 1.7;
+  color: var(--text-dark);
+}
+
+@media (max-width: 768px) {
+  .about-section {
+    padding: var(--spacing-2xl) 0;
+  }
+}

@@ -246,6 +246,37 @@
   cursor: pointer;
 }
 
+.icon-button.active {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.search-form {
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  width: 200px;
+  padding: 6px var(--spacing-sm);
+  border: 1px solid #000000;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #000000;
+  background-color: #ffffff;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #000000;
+}
+
+@media (max-width: 768px) {
+  .search-input {
+    width: 140px;
+  }
+}
+
 @media (max-width: 768px) {
   .header-content {
     padding: 0 var(--spacing-md);

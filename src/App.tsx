@@ -8,6 +8,7 @@ import DogsPage from './pages/Dogs'
 import ProductPage from './pages/Product'
 import CartPage from './pages/Cart'
 import CheckoutPage from './pages/checkout'
+import AboutPage from './pages/About'
 
 const queryClient = new QueryClient()
 
@@ -22,6 +23,7 @@ function App() {
           <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/about" element={<AboutPage />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

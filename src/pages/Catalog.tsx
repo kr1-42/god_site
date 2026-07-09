@@ -9,6 +9,7 @@ import './Catalog.css'
 export default function CatalogPage() {
   const [searchParams] = useSearchParams()
   const category = searchParams.get('category') || 'all'
+  const search = searchParams.get('search') || ''
 
   const bagProducts = PRODUCTS.map((product, index) => ({
     ...product,
@@ -20,18 +21,38 @@ export default function CatalogPage() {
     badge: index === 0 ? 'New' : undefined,
   }))
 
-  const visibleProducts = category === 'dogs'
+  const categoryProducts = category === 'dogs'
     ? dogProducts
     : category === 'bags'
       ? bagProducts
       : [...bagProducts, ...dogProducts]
 
-  const heroImage = category === 'dogs' ? dogProducts[0].image : BAG_PHOTOS[12].src
-  const heroTitle = category === 'dogs' ? 'Dogs Collection' : 'Bags Collection'
-  const heroSubtitle = category === 'dogs'
-    ? 'Explore our curated selection of luxury dog products'
-    : 'Explore our curated selection of luxury bags'
-  const sectionTitle = category === 'dogs' ? 'Dogs' : 'Bags'
+  const visibleProducts = search
+    ? categoryProducts.filter((product) =>
+        product.name.toLowerCase().includes(search.toLowerCase())
+      )
+    : categoryProducts
+
+  const heroImage = search
+    ? '/attachments/prod2.jpg'
+    : category === 'dogs'
+      ? dogProducts[0].image
+      : BAG_PHOTOS[12].src
+  const heroTitle = search
+    ? 'Search Results'
+    : category === 'dogs'
+      ? 'Dogs Collection'
+      : 'Bags Collection'
+  const heroSubtitle = search
+    ? `Showing results for "${search}"`
+    : category === 'dogs'
+      ? 'Explore our curated selection of luxury dog products'
+      : 'Explore our curated selection of luxury bags'
+  const sectionTitle = search
+    ? `Search results for "${search}"`
+    : category === 'dogs'
+      ? 'Dogs'
+      : 'Bags'
 
   return (
     <Layout>
