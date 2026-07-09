@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import Layout from '../components/Layout'
 import { useCartStore } from '../stores/cartStore'
@@ -7,6 +7,7 @@ import { getProductById } from '../services/productData'
 import './Cart.css'
 
 export default function CartPage() {
+  const navigate = useNavigate()
   const { items, removeItem, updateQuantity } = useCartStore()
   const [quantities, setQuantities] = useState<Record<string, number>>(
     Object.fromEntries(items.map(item => [item.productId, item.quantity]))
@@ -101,7 +102,12 @@ export default function CartPage() {
                   <span>Total</span>
                   <span>${total.toFixed(2)}</span>
                 </div>
-                <button className="checkout-button">Proceed to Checkout</button>
+                <button
+                  className="checkout-button"
+                  onClick={() => navigate('/checkout')}
+                >
+                  Proceed to Checkout
+                </button>
                 <Link to="/catalog" className="continue-shopping">Continue Shopping</Link>
               </div>
             </div>

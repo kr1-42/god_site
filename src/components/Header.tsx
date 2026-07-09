@@ -1,9 +1,12 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useState } from 'react'
 import './Header.css'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isShopDropdownOpen, setIsShopDropdownOpen] = useState(false)
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
@@ -12,6 +15,17 @@ export default function Header() {
   const closeMenu = () => {
     setIsMenuOpen(false)
   }
+
+  const handleShopFilter = (category: 'dogs' | 'bags' | 'all') => {
+    setIsShopDropdownOpen(false)
+    if (category === 'all') {
+      navigate('/catalog')
+    } else {
+      navigate(`/catalog?category=${category}`)
+    }
+  }
+
+  const currentCategory = searchParams.get('category') || 'all'
 
   return (
     <header className="header">
@@ -29,14 +43,106 @@ export default function Header() {
         </Link>
 
         <nav className="nav-menu">
-          <Link to="/catalog" className="nav-link">Shop</Link>
+          <div className="shop-dropdown-container">
+            <button 
+              className={`nav-link shop-dropdown-toggle ${isShopDropdownOpen ? 'active' : ''}`}
+              onClick={() => setIsShopDropdownOpen(!isShopDropdownOpen)}
+              aria-expanded={isShopDropdownOpen}
+            >
+              Shop
+              <svg 
+                className="dropdown-arrow" 
+                width="12" 
+                height="12" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            
+            {isShopDropdownOpen && (
+              <div className="shop-dropdown-menu">
+                <button
+                  className={`shop-dropdown-item ${currentCategory === 'all' ? 'active' : ''}`}
+                  onClick={() => handleShopFilter('all')}
+                >
+                  All Products
+                </button>
+                <button
+                  className={`shop-dropdown-item ${currentCategory === 'dogs' ? 'active' : ''}`}
+                  onClick={() => handleShopFilter('dogs')}
+                >
+                  Dogs
+                </button>
+                <button
+                  className={`shop-dropdown-item ${currentCategory === 'bags' ? 'active' : ''}`}
+                  onClick={() => handleShopFilter('bags')}
+                >
+                  Bags
+                </button>
+              </div>
+            )}
+          </div>
           <Link to="/catalog" className="nav-link">New</Link>
           <Link to="/catalog" className="nav-link">About</Link>
         </nav>
 
         {isMenuOpen && (
           <nav className="mobile-menu">
-            <Link to="/catalog" className="mobile-nav-link" onClick={closeMenu}>Shop</Link>
+            <div className="mobile-shop-dropdown-container">
+              <button
+                className={`mobile-nav-link mobile-shop-toggle ${isShopDropdownOpen ? 'active' : ''}`}
+                onClick={() => setIsShopDropdownOpen(!isShopDropdownOpen)}
+                aria-expanded={isShopDropdownOpen}
+              >
+                Shop
+                <svg 
+                  className="dropdown-arrow" 
+                  width="12" 
+                  height="12" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2"
+                >
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              {isShopDropdownOpen && (
+                <div className="mobile-shop-dropdown-menu">
+                  <button
+                    className={`mobile-shop-dropdown-item ${currentCategory === 'all' ? 'active' : ''}`}
+                    onClick={() => {
+                      handleShopFilter('all')
+                      closeMenu()
+                    }}
+                  >
+                    All Products
+                  </button>
+                  <button
+                    className={`mobile-shop-dropdown-item ${currentCategory === 'dogs' ? 'active' : ''}`}
+                    onClick={() => {
+                      handleShopFilter('dogs')
+                      closeMenu()
+                    }}
+                  >
+                    Dogs
+                  </button>
+                  <button
+                    className={`mobile-shop-dropdown-item ${currentCategory === 'bags' ? 'active' : ''}`}
+                    onClick={() => {
+                      handleShopFilter('bags')
+                      closeMenu()
+                    }}
+                  >
+                    Bags
+                  </button>
+                </div>
+              )}
+            </div>
             <Link to="/catalog" className="mobile-nav-link" onClick={closeMenu}>New</Link>
             <Link to="/catalog" className="mobile-nav-link" onClick={closeMenu}>About</Link>
           </nav>

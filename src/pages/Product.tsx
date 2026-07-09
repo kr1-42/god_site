@@ -36,8 +36,9 @@ export default function ProductPage() {
     setTimeout(() => setShowAddedMessage(false), 2000)
   }
 
-  // Use the product image as the only image for now
-  const images = [productData.image, productData.image, productData.image]
+  const images = productData.images && productData.images.length > 0
+    ? productData.images
+    : [productData.image]
 
   return (
     <Layout>
@@ -122,7 +123,14 @@ export default function ProductPage() {
 
               <div className="product-shipping">
                 <h3>Shipping & Returns</h3>
-                <p>Free express shipping worldwide on orders over $500. Returns accepted within 30 days of purchase.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+              </div>
+
+              <div className="product-shipping">
+                <h3>Atelier Notes</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.</p>
+                <p>Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta.</p>
               </div>
             </div>
           </div>

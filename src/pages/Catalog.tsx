@@ -1,30 +1,53 @@
 import Layout from '../components/Layout'
 import Hero from '../components/Hero'
 import ProductGrid from '../components/ProductGrid'
-import { PRODUCTS } from '../services/productData'
+import { Link, useSearchParams } from 'react-router-dom'
+import { BAG_PHOTOS } from '../services/galleryData'
+import { DOG_PRODUCTS, PRODUCTS } from '../services/productData'
 import './Catalog.css'
 
 export default function CatalogPage() {
-  // Rotate products to create more variety for display
-  const allProducts = [
-    ...PRODUCTS.map(p => ({ ...p, badge: p.id === '1' ? 'New' : undefined })),
-    ...PRODUCTS.map(p => ({ ...p, id: `${p.id}-alt`, badge: undefined })),
-    ...PRODUCTS.map(p => ({ ...p, id: `${p.id}-alt2`, badge: p.id === '2' ? 'New' : undefined })),
-  ]
+  const [searchParams] = useSearchParams()
+  const category = searchParams.get('category') || 'all'
+
+  const bagProducts = PRODUCTS.map((product, index) => ({
+    ...product,
+    badge: index === 0 ? 'New' : undefined,
+  }))
+
+  const dogProducts = DOG_PRODUCTS.map((product, index) => ({
+    ...product,
+    badge: index === 0 ? 'New' : undefined,
+  }))
+
+  const visibleProducts = category === 'dogs'
+    ? dogProducts
+    : category === 'bags'
+      ? bagProducts
+      : [...bagProducts, ...dogProducts]
+
+  const heroImage = category === 'dogs' ? dogProducts[0].image : BAG_PHOTOS[12].src
+  const heroTitle = category === 'dogs' ? 'Dogs Collection' : 'Bags Collection'
+  const heroSubtitle = category === 'dogs'
+    ? 'Explore our curated selection of luxury dog products'
+    : 'Explore our curated selection of luxury bags'
+  const sectionTitle = category === 'dogs' ? 'Dogs' : 'Bags'
 
   return (
     <Layout>
       <Hero
-        title="Our Collection"
-        subtitle="Explore our curated selection of luxury handbags"
+        title={heroTitle}
+        subtitle={heroSubtitle}
+        backgroundImage={heroImage}
       />
+
 
       <section className="catalog-section">
         <div className="container">
           <div className="catalog-header">
             <div>
-              <h1>All Products</h1>
-              <p>Showing {allProducts.length} items</p>
+              <h1>{sectionTitle}</h1>
+              <p>Showing {visibleProducts.length} items</p>
             </div>
             <div className="catalog-filters">
               <select defaultValue="">
@@ -36,7 +59,41 @@ export default function CatalogPage() {
             </div>
           </div>
 
-          <ProductGrid products={allProducts} columns={2} />
+          <ProductGrid products={visibleProducts} columns={2} />
+        </div>
+      </section>
+
+      <section className="catalog-split-section">
+        <div className="container">
+          <div className="catalog-split">
+            <Link
+              to="/catalog"
+              className="catalog-split-panel catalog-split-panel--bags"
+              style={{ backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.45)), url(${BAG_PHOTOS[0].src})` }}
+            >
+              <div className="catalog-split-panel-inner">
+                <p className="catalog-split-kicker">Shop</p>
+                <h2>Bags</h2>
+                <span>Browse the bags collection</span>
+              </div>
+            </Link>
+
+            <div className="catalog-split-divider" aria-hidden="true">
+              <span>or</span>
+            </div>
+
+            <Link
+              to="/dogs"
+              className="catalog-split-panel catalog-split-panel--dogs"
+              style={{ backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.45)), url('/attachments/prod1.jpg')" }}
+            >
+              <div className="catalog-split-panel-inner">
+                <p className="catalog-split-kicker">Shop</p>
+                <h2>Dogs</h2>
+                <span>Browse the dogs collection</span>
+              </div>
+            </Link>
+          </div>
         </div>
       </section>
     </Layout>

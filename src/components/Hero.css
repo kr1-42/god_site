@@ -59,6 +59,22 @@
   font-weight: 300;
 }
 
+.hero-media {
+  margin-top: var(--spacing-xl);
+  width: min(100%, 420px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+  padding: 10px;
+  backdrop-filter: blur(4px);
+}
+
+.hero-media-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
 @media (max-width: 768px) {
   .hero-overlay {
     padding: var(--spacing-2xl);
@@ -70,6 +86,10 @@
 
   .hero-subtitle {
     font-size: 14px;
+  }
+
+  .hero-media {
+    width: 100%;
   }
 }
 
