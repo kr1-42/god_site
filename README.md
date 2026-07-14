@@ -1,1 +1,2 @@
-start of e-commerce project
+almost ended e-commerce project
+
