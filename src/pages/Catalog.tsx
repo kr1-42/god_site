@@ -3,23 +3,28 @@ import Hero from '../components/Hero'
 import ProductGrid from '../components/ProductGrid'
 import { Link, useSearchParams } from 'react-router-dom'
 import { BAG_PHOTOS } from '../services/galleryData'
-import { DOG_PRODUCTS, PRODUCTS } from '../services/productData'
+import { useProducts } from '../services/products'
 import './Catalog.css'
 
 export default function CatalogPage() {
   const [searchParams] = useSearchParams()
   const category = searchParams.get('category') || 'all'
   const search = searchParams.get('search') || ''
+  const { data: products = [], isLoading, isError } = useProducts()
 
-  const bagProducts = PRODUCTS.map((product, index) => ({
-    ...product,
-    badge: index === 0 ? 'New' : undefined,
-  }))
+  const bagProducts = products
+    .filter((product) => product.category === 'bags')
+    .map((product, index) => ({
+      ...product,
+      badge: index === 0 ? 'New' : undefined,
+    }))
 
-  const dogProducts = DOG_PRODUCTS.map((product, index) => ({
-    ...product,
-    badge: index === 0 ? 'New' : undefined,
-  }))
+  const dogProducts = products
+    .filter((product) => product.category === 'dogs')
+    .map((product, index) => ({
+      ...product,
+      badge: index === 0 ? 'New' : undefined,
+    }))
 
   const categoryProducts = category === 'dogs'
     ? dogProducts
@@ -36,7 +41,7 @@ export default function CatalogPage() {
   const heroImage = search
     ? '/attachments/prod2.jpg'
     : category === 'dogs'
-      ? dogProducts[0].image
+      ? dogProducts[0]?.image ?? '/attachments/prod1.jpg'
       : BAG_PHOTOS[12].src
   const heroTitle = search
     ? 'Search Results'
@@ -53,6 +58,26 @@ export default function CatalogPage() {
     : category === 'dogs'
       ? 'Dogs'
       : 'Bags'
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="container">
+          <p>Loading…</p>
+        </div>
+      </Layout>
+    )
+  }
+
+  if (isError) {
+    return (
+      <Layout>
+        <div className="container">
+          <p>Something went wrong loading products.</p>
+        </div>
+      </Layout>
+    )
+  }
 
   return (
     <Layout>

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
 import { useCartStore } from '../stores/cartStore'
 import { Product } from '../types'
-import { getProductById } from '../services/productData'
+import { useProducts } from '../services/products'
 import './checkout.css'
 
 type Step = 'shipping' | 'payment' | 'review' | 'confirmation'
@@ -29,6 +29,7 @@ interface PaymentInfo {
 export default function CheckoutPage() {
   const navigate = useNavigate()
   const { items, clearCart } = useCartStore()
+  const { data: allProducts = [] } = useProducts()
   const [currentStep, setCurrentStep] = useState<Step>('shipping')
   const [shippingInfo, setShippingInfo] = useState<ShippingInfo>({
     firstName: '',
@@ -51,7 +52,7 @@ export default function CheckoutPage() {
   // Get product details for cart items
   const cartItemsWithProduct: (Product & { quantity: number })[] = items
     .map(item => {
-      const product = getProductById(item.productId)
+      const product = allProducts.find(p => p.id === item.productId)
       if (product) {
         return { ...product, quantity: item.quantity }
       }

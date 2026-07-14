@@ -3,19 +3,20 @@ import { useState } from 'react'
 import Layout from '../components/Layout'
 import { useCartStore } from '../stores/cartStore'
 import { Product } from '../types'
-import { getProductById } from '../services/productData'
+import { useProducts } from '../services/products'
 import './Cart.css'
 
 export default function CartPage() {
   const navigate = useNavigate()
   const { items, removeItem, updateQuantity } = useCartStore()
+  const { data: allProducts = [], isLoading } = useProducts()
   const [quantities, setQuantities] = useState<Record<string, number>>(
     Object.fromEntries(items.map(item => [item.productId, item.quantity]))
   )
 
   const cartItemsWithProduct: (Product & { quantity: number })[] = items
     .map(item => {
-      const product = getProductById(item.productId)
+      const product = allProducts.find(p => p.id === item.productId)
       if (product) {
         return { ...product, quantity: quantities[item.productId] || item.quantity }
       }
@@ -40,6 +41,19 @@ export default function CartPage() {
   const subtotal = cartItemsWithProduct.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const shipping = 50
   const total = subtotal + shipping
+
+  if (isLoading && items.length > 0) {
+    return (
+      <Layout>
+        <section className="cart-section">
+          <div className="container">
+            <h1>Shopping Cart</h1>
+            <p>Loading…</p>
+          </div>
+        </section>
+      </Layout>
+    )
+  }
 
   return (
     <Layout>

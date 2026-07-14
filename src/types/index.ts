@@ -7,6 +7,7 @@ export interface Product {
   image: string
   images?: string[]
   stock: number
+  category: 'bags' | 'dogs'
 }
 
 export interface CartItem {

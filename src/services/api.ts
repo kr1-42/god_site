@@ -1,5 +1,5 @@
 // API configuration
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
+export const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'
 
 // Helper for making API calls
 export async function apiCall<T>(
@@ -15,7 +15,8 @@ export async function apiCall<T>(
   })
 
   if (!response.ok) {
-    throw new Error(`API error: ${response.statusText}`)
+    const body = await response.json().catch(() => null)
+    throw new Error(body?.error || `API error: ${response.statusText}`)
   }
 
   return response.json()

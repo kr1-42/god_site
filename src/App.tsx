@@ -9,6 +9,7 @@ import ProductPage from './pages/Product'
 import CartPage from './pages/Cart'
 import CheckoutPage from './pages/checkout'
 import AboutPage from './pages/About'
+import AdminPage from './pages/Admin'
 
 const queryClient = new QueryClient()
 
@@ -24,6 +25,7 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

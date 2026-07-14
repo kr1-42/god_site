@@ -1,18 +1,32 @@
 import Layout from '../components/Layout'
 import Hero from '../components/Hero'
 import ProductCard from '../components/ProductCard'
-import { DOG_PRODUCTS, PRODUCTS } from '../services/productData'
+import { useProducts } from '../services/products'
 import './Home.css'
 
 export default function HomePage() {
-  const newArrivals = [...PRODUCTS.slice(0, 2), ...DOG_PRODUCTS.slice(0, 1)].map(
+  const { data: products = [], isLoading } = useProducts()
+  const bagProducts = products.filter((product) => product.category === 'bags')
+  const dogProducts = products.filter((product) => product.category === 'dogs')
+
+  const newArrivals = [...bagProducts.slice(0, 2), ...dogProducts.slice(0, 1)].map(
     (product, index) => ({
       ...product,
       badge: index === 0 ? 'New' : undefined,
     })
   )
 
-  const inEvidence = [...PRODUCTS.slice(2, 4), ...DOG_PRODUCTS.slice(1, 3)]
+  const inEvidence = [...bagProducts.slice(2, 4), ...dogProducts.slice(1, 3)]
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="container">
+          <p>Loading…</p>
+        </div>
+      </Layout>
+    )
+  }
 
   return (
     <Layout>

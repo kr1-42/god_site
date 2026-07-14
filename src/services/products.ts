@@ -1,6 +1,7 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Product } from '../types'
 import { apiCall } from './api'
+import { useAdminStore } from '../stores/adminStore'
 
 export function useProducts() {
   return useQuery({
@@ -14,5 +15,24 @@ export function useProduct(id: string) {
     queryKey: ['product', id],
     queryFn: () => apiCall<Product>(`/products/${id}`),
     enabled: !!id,
+  })
+}
+
+export type NewProductInput = Omit<Product, 'id'>
+
+export function useCreateProduct() {
+  const queryClient = useQueryClient()
+  const token = useAdminStore((state) => state.token)
+
+  return useMutation({
+    mutationFn: (input: NewProductInput) =>
+      apiCall<Product>('/products', {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: JSON.stringify(input),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] })
+    },
   })
 }

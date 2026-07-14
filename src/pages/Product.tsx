@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import Layout from '../components/Layout'
 import { useCartStore } from '../stores/cartStore'
-import { getProductById } from '../services/productData'
+import { useProduct } from '../services/products'
 import './Product.css'
 
 export default function ProductPage() {
@@ -12,7 +12,19 @@ export default function ProductPage() {
   const [selectedImage, setSelectedImage] = useState(0)
   const [showAddedMessage, setShowAddedMessage] = useState(false)
 
-  const productData = id ? getProductById(id) : null
+  const { data: productData, isLoading } = useProduct(id ?? '')
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <section className="product-section">
+          <div className="container">
+            <p>Loading…</p>
+          </div>
+        </section>
+      </Layout>
+    )
+  }
 
   if (!productData) {
     return (
