@@ -31,9 +31,9 @@ export default function HomePage() {
   return (
     <Layout>
       <Hero
-        title="Crystal Black"
+        title=""
         badge="New Collection"
-        backgroundImage="/attachments/showcase.jpg"
+        backgroundImage="/attachments/hero.jpeg"
         subtitle="Structured silhouettes, soft textures, and versatile pieces for everyday movement."
       />
 
