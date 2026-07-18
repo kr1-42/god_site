@@ -10,7 +10,8 @@ export default function CatalogPage() {
   const [searchParams] = useSearchParams()
   const category = searchParams.get('category') || 'all'
   const search = searchParams.get('search') || ''
-  const { data: products = [], isLoading, isError } = useProducts()
+  const { data: allProducts = [], isLoading, isError } = useProducts()
+  const products = allProducts.filter((product) => product.status === 'active')
 
   const bagProducts = products
     .filter((product) => product.category === 'bags')

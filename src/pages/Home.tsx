@@ -5,7 +5,8 @@ import { useProducts } from '../services/products'
 import './Home.css'
 
 export default function HomePage() {
-  const { data: products = [], isLoading } = useProducts()
+  const { data: allProducts = [], isLoading } = useProducts()
+  const products = allProducts.filter((product) => product.status === 'active')
   const bagProducts = products.filter((product) => product.category === 'bags')
   const dogProducts = products.filter((product) => product.category === 'dogs')
 

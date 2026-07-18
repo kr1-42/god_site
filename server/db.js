@@ -16,9 +16,20 @@ db.exec(`
     image TEXT NOT NULL,
     images TEXT NOT NULL DEFAULT '[]',
     stock INTEGER NOT NULL DEFAULT 0,
-    category TEXT NOT NULL DEFAULT 'bags'
+    category TEXT NOT NULL DEFAULT 'bags',
+    status TEXT NOT NULL DEFAULT 'active'
   );
 `)
+
+function migrateAddStatusColumn() {
+  const columns = db.prepare('PRAGMA table_info(products)').all()
+  const hasStatus = columns.some((column) => column.name === 'status')
+  if (!hasStatus) {
+    db.exec("ALTER TABLE products ADD COLUMN status TEXT NOT NULL DEFAULT 'active'")
+  }
+}
+
+migrateAddStatusColumn()
 
 function seedIfEmpty() {
   const { count } = db.prepare('SELECT COUNT(*) AS count FROM products').get()

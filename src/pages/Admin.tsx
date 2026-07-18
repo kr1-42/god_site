@@ -4,7 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import Layout from '../components/Layout'
 import { useAdminStore } from '../stores/adminStore'
-import { useProducts, useCreateProduct } from '../services/products'
+import { useProducts, useCreateProduct, useUpdateProduct } from '../services/products'
+import { Product } from '../types'
 import './Admin.css'
 
 const productFormSchema = z.object({
@@ -62,6 +63,132 @@ function AdminLogin() {
   )
 }
 
+type EditableFields = {
+  name: string
+  price: string
+  stock: string
+  category: Product['category']
+}
+
+function AdminProductRow({ product }: { product: Product }) {
+  const updateProduct = useUpdateProduct()
+  const [isEditing, setIsEditing] = useState(false)
+  const [fields, setFields] = useState<EditableFields>({
+    name: product.name,
+    price: String(product.price),
+    stock: String(product.stock),
+    category: product.category,
+  })
+  const [error, setError] = useState<string | null>(null)
+
+  const startEditing = () => {
+    setFields({
+      name: product.name,
+      price: String(product.price),
+      stock: String(product.stock),
+      category: product.category,
+    })
+    setError(null)
+    setIsEditing(true)
+  }
+
+  const handleSave = () => {
+    const price = Number(fields.price)
+    const stock = Number(fields.stock)
+
+    if (!fields.name.trim()) {
+      setError('Name is required')
+      return
+    }
+    if (!Number.isFinite(price) || price <= 0) {
+      setError('Price must be greater than 0')
+      return
+    }
+    if (!Number.isInteger(stock) || stock < 0) {
+      setError('Stock must be a non-negative whole number')
+      return
+    }
+
+    setError(null)
+    updateProduct.mutate(
+      { id: product.id, name: fields.name.trim(), price, stock, category: fields.category },
+      { onSuccess: () => setIsEditing(false) },
+    )
+  }
+
+  const toggleStatus = () => {
+    updateProduct.mutate({ id: product.id, status: product.status === 'active' ? 'inactive' : 'active' })
+  }
+
+  if (isEditing) {
+    return (
+      <tr>
+        <td>
+          <input
+            type="text"
+            value={fields.name}
+            onChange={(e) => setFields({ ...fields, name: e.target.value })}
+          />
+        </td>
+        <td>
+          <select
+            value={fields.category}
+            onChange={(e) => setFields({ ...fields, category: e.target.value as Product['category'] })}
+          >
+            <option value="bags">Bags</option>
+            <option value="dogs">Dogs</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            step="0.01"
+            value={fields.price}
+            onChange={(e) => setFields({ ...fields, price: e.target.value })}
+          />
+        </td>
+        <td>
+          <input
+            type="number"
+            value={fields.stock}
+            onChange={(e) => setFields({ ...fields, stock: e.target.value })}
+          />
+        </td>
+        <td>
+          <span className={`admin-status admin-status-${product.status}`}>{product.status}</span>
+        </td>
+        <td className="admin-row-actions">
+          {error && <span className="admin-field-error">{error}</span>}
+          <button className="btn-secondary" onClick={handleSave} disabled={updateProduct.isPending}>
+            {updateProduct.isPending ? 'Saving…' : 'Save'}
+          </button>
+          <button className="btn-secondary" onClick={() => setIsEditing(false)} disabled={updateProduct.isPending}>
+            Cancel
+          </button>
+        </td>
+      </tr>
+    )
+  }
+
+  return (
+    <tr>
+      <td>{product.name}</td>
+      <td>{product.category}</td>
+      <td>${product.price.toFixed(2)}</td>
+      <td>{product.stock}</td>
+      <td>
+        <span className={`admin-status admin-status-${product.status}`}>{product.status}</span>
+      </td>
+      <td className="admin-row-actions">
+        <button className="btn-secondary" onClick={startEditing}>Edit</button>
+        <button className="btn-secondary" onClick={toggleStatus} disabled={updateProduct.isPending}>
+          {product.status === 'active' ? 'Deactivate' : 'Activate'}
+        </button>
+      </td>
+    </tr>
+  )
+}
+
 function AdminProductList() {
   const { data: products = [], isLoading } = useProducts()
 
@@ -78,16 +205,13 @@ function AdminProductList() {
             <th>Category</th>
             <th>Price</th>
             <th>Stock</th>
+            <th>Status</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {products.map((product) => (
-            <tr key={product.id}>
-              <td>{product.name}</td>
-              <td>{product.category}</td>
-              <td>${product.price.toFixed(2)}</td>
-              <td>{product.stock}</td>
-            </tr>
+            <AdminProductRow key={product.id} product={product} />
           ))}
         </tbody>
       </table>
@@ -124,6 +248,7 @@ function AdminAddProductForm() {
         stock: values.stock,
         image: values.image,
         images: additionalImages.length > 0 ? [values.image, ...additionalImages] : [values.image],
+        status: 'active',
       },
       {
         onSuccess: () => {

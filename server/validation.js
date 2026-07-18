@@ -8,4 +8,10 @@ export const productInputSchema = z.object({
   images: z.array(z.string().url()).optional(),
   stock: z.number().int().nonnegative(),
   category: z.enum(['bags', 'dogs']),
+  status: z.enum(['active', 'inactive']).optional(),
 })
+
+export const productUpdateSchema = productInputSchema.partial().refine(
+  (data) => Object.keys(data).length > 0,
+  { message: 'At least one field must be provided' },
+)

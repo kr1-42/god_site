@@ -36,3 +36,22 @@ export function useCreateProduct() {
     },
   })
 }
+
+export type UpdateProductInput = Partial<Omit<Product, 'id'>>
+
+export function useUpdateProduct() {
+  const queryClient = useQueryClient()
+  const token = useAdminStore((state) => state.token)
+
+  return useMutation({
+    mutationFn: ({ id, ...input }: UpdateProductInput & { id: string }) =>
+      apiCall<Product>(`/products/${id}`, {
+        method: 'PATCH',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: JSON.stringify(input),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] })
+    },
+  })
+}
