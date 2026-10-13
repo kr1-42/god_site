@@ -1,5 +1,6 @@
 import { ReactNode } from 'react'
 import Header from './Header'
+import { useTranslation } from '../stores/languageStore'
 import './Layout.css'
 
 interface LayoutProps {
@@ -7,6 +8,8 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="layout">
       <Header />
@@ -17,43 +20,43 @@ export default function Layout({ children }: LayoutProps) {
         <div className="container">
           <div className="footer-content">
             <div className="footer-section">
-              <h4>Customer Service</h4>
+              <h4>{t('footer.customerService')}</h4>
               <ul>
-                <li><a href="#contact">Contact Us</a></li>
-                <li><a href="#shipping">Shipping Info</a></li>
-                <li><a href="#returns">Returns</a></li>
-                <li><a href="#faq">FAQ</a></li>
+                <li><a href="#contact">{t('footer.contact')}</a></li>
+                <li><a href="#shipping">{t('footer.shippingInfo')}</a></li>
+                <li><a href="#returns">{t('footer.returns')}</a></li>
+                <li><a href="#faq">{t('footer.faq')}</a></li>
               </ul>
             </div>
             <div className="footer-section">
-              <h4>About</h4>
+              <h4>{t('footer.about')}</h4>
               <ul>
-                <li><a href="#about">Our Story</a></li>
-                <li><a href="#sustainability">Sustainability</a></li>
-                <li><a href="#careers">Careers</a></li>
-                <li><a href="#press">Press</a></li>
+                <li><a href="#about">{t('footer.ourStory')}</a></li>
+                <li><a href="#sustainability">{t('footer.sustainability')}</a></li>
+                <li><a href="#careers">{t('footer.careers')}</a></li>
+                <li><a href="#press">{t('footer.press')}</a></li>
               </ul>
             </div>
             <div className="footer-section">
-              <h4>Connect</h4>
+              <h4>{t('footer.connect')}</h4>
               <ul>
                 <li><a href="#instagram">Instagram</a></li>
                 <li><a href="#twitter">Twitter</a></li>
                 <li><a href="#facebook">Facebook</a></li>
-                <li><a href="#newsletter">Newsletter</a></li>
+                <li><a href="#newsletter">{t('footer.newsletter')}</a></li>
               </ul>
             </div>
             <div className="footer-section">
-              <h4>Legal</h4>
+              <h4>{t('footer.legal')}</h4>
               <ul>
-                <li><a href="#privacy">Privacy Policy</a></li>
-                <li><a href="#terms">Terms of Service</a></li>
-                <li><a href="#cookies">Cookie Policy</a></li>
+                <li><a href="#privacy">{t('footer.privacy')}</a></li>
+                <li><a href="#terms">{t('footer.terms')}</a></li>
+                <li><a href="#cookies">{t('footer.cookies')}</a></li>
               </ul>
             </div>
           </div>
           <div className="footer-bottom">
-            <p>&copy; 2026 Mlouye. All rights reserved.</p>
+            <p>&copy; 2026 Mlouye. {t('footer.rights')}</p>
           </div>
         </div>
       </footer>

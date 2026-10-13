@@ -1,86 +1,83 @@
-.catalog-split-section {
+.catalog-categories-section {
   padding: var(--spacing-3xl) 0 0;
 }
 
-.catalog-split {
+.catalog-categories-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  padding-top: var(--spacing-xl);
+  border-top: 1px solid var(--border-color);
+}
+
+.catalog-categories-header h2 {
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.catalog-categories-all {
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  white-space: nowrap;
+}
+
+.catalog-categories-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  align-items: stretch;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.catalog-category-card {
+  display: flex;
+  flex-direction: column;
   border: 1px solid var(--border-color);
-  background: var(--primary-light);
+  transition: border-color 0.2s ease;
+}
+
+.catalog-category-card:hover {
+  border-color: var(--text-dark);
+}
+
+.catalog-category-image {
+  aspect-ratio: 1;
+  background-color: #ffffff;
   overflow: hidden;
 }
 
-.catalog-split-panel {
-  min-height: 280px;
+.catalog-category-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.4s ease;
+}
+
+.catalog-category-card:hover .catalog-category-image img {
+  transform: scale(1.04);
+}
+
+.catalog-category-info {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: var(--spacing-3xl);
-  transition: transform 0.25s ease;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  border-top: 1px solid var(--border-color);
 }
 
-.catalog-split-panel:hover {
-  transform: scale(1.01);
+.catalog-category-info h3 {
+  font-size: 16px;
+  font-weight: 500;
 }
 
-.catalog-split-panel--bags {
-  background: linear-gradient(rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.45)), url('/attachments/prod1.jpg');
-  background-size: cover;
-  background-position: center;
-}
-
-.catalog-split-panel--dogs {
-  background: linear-gradient(rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.45)), url('/attachments/prod2.jpg');
-  background-size: cover;
-  background-position: center;
-}
-
-.catalog-split-panel-inner {
-  background: rgba(255, 255, 255, 0.82);
-  border: 1px solid var(--border-color);
-  padding: var(--spacing-xl) var(--spacing-2xl);
-  min-width: 220px;
-}
-
-.catalog-split-panel-inner h2 {
-  font-size: 34px;
-  font-weight: 400;
-  margin-bottom: var(--spacing-sm);
-}
-
-.catalog-split-panel-inner span {
-  display: inline-block;
-  font-size: 14px;
+.catalog-category-info span {
+  font-size: 13px;
   color: #666;
-}
-
-.catalog-split-kicker {
-  margin-bottom: var(--spacing-sm);
-  font-size: 12px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: #777;
-}
-
-.catalog-split-divider {
-  width: 1px;
-  background: var(--border-color);
-  position: relative;
-}
-
-.catalog-split-divider span {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: var(--spacing-sm) var(--spacing-md);
-  background: var(--primary-light);
-  border: 1px solid var(--border-color);
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
+  white-space: nowrap;
 }
 
 .catalog-section {
@@ -174,30 +171,31 @@
 }
 
 @media (max-width: 768px) {
-  .catalog-split-section {
+  .catalog-categories-section {
     padding: var(--spacing-2xl) 0 0;
   }
 
-  .catalog-split {
-    grid-template-columns: 1fr;
+  .catalog-categories-header h2 {
+    font-size: 20px;
   }
 
-  .catalog-split-divider {
-    width: 100%;
-    height: 1px;
+  .catalog-categories-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-sm);
   }
 
-  .catalog-split-divider span {
-    top: 0;
-    transform: translate(-50%, -50%);
+  .catalog-category-info {
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--spacing-sm);
   }
 
-  .catalog-split-panel {
-    min-height: 240px;
+  .catalog-category-info h3 {
+    font-size: 14px;
   }
 
-  .catalog-split-panel-inner h2 {
-    font-size: 28px;
+  .catalog-category-info span {
+    font-size: 12px;
   }
 
   .catalog-section {

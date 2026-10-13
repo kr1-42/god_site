@@ -10,9 +10,27 @@
   padding: var(--spacing-3xl) 0;
 }
 
+/* Fixed backgrounds are sized to the whole screen on phones and tablets, which zooms
+   the photo in; there the banner instead follows the photo's own shape */
+@media (max-width: 1024px) {
+  .hero {
+    background-attachment: scroll;
+  }
+
+  .hero[style*='--hero-aspect'] {
+    min-height: 0;
+    aspect-ratio: var(--hero-aspect);
+    max-height: 80svh;
+  }
+}
+
 @media (max-width: 768px) {
   .hero {
     min-height: 400px;
+  }
+
+  .hero[style*='--hero-aspect'] {
+    min-height: 0;
   }
 }
 
@@ -94,19 +112,19 @@
 }
 
 /* No background image variation */
-.hero:not([style*="backgroundImage"]) {
+.hero:not([style*="background-image"]) {
   background-color: var(--secondary-gray);
 }
 
-.hero:not([style*="backgroundImage"]) .hero-overlay {
+.hero:not([style*="background-image"]) .hero-overlay {
   background: none;
 }
 
-.hero:not([style*="backgroundImage"]) .hero-title {
+.hero:not([style*="background-image"]) .hero-title {
   color: var(--text-dark);
 }
 
-.hero:not([style*="backgroundImage"]) .hero-badge,
-.hero:not([style*="backgroundImage"]) .hero-subtitle {
+.hero:not([style*="background-image"]) .hero-badge,
+.hero:not([style*="background-image"]) .hero-subtitle {
   color: #666;
 }

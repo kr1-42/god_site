@@ -1,0 +1,64 @@
+.auto-carousel {
+  position: relative;
+}
+
+.auto-carousel-track {
+  display: grid;
+  grid-auto-flow: column;
+  /* About four items on desktop; the next one peeks in on smaller screens */
+  grid-auto-columns: calc((100% - 3 * var(--spacing-lg)) / 4);
+  gap: var(--spacing-lg);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+
+.auto-carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.auto-carousel-track:focus-visible {
+  outline: 2px solid var(--primary-dark);
+  outline-offset: 4px;
+}
+
+.auto-carousel-track > * {
+  scroll-snap-align: start;
+  min-width: 0;
+}
+
+.auto-carousel-controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-md);
+}
+
+.auto-carousel-controls button {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border-color);
+  background-color: var(--text-light);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.auto-carousel-controls button:hover {
+  border-color: var(--text-dark);
+}
+
+@media (max-width: 1024px) {
+  .auto-carousel-track {
+    grid-auto-columns: calc((100% - var(--spacing-lg)) / 2.3);
+  }
+}
+
+@media (max-width: 600px) {
+  .auto-carousel-track {
+    grid-auto-columns: 66%;
+    gap: var(--spacing-md);
+  }
+}

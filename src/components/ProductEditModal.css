@@ -1,0 +1,406 @@
+.edit-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg);
+  background-color: rgba(0, 0, 0, 0.45);
+}
+
+.edit-modal {
+  display: flex;
+  flex-direction: column;
+  width: min(960px, 100%);
+  max-height: calc(100dvh - 2 * var(--spacing-lg));
+  background-color: #ffffff;
+  border: 1px solid #000000;
+}
+
+.edit-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.edit-modal-header h2 {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.edit-modal-close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  line-height: 1;
+  padding: 0 var(--spacing-xs);
+  cursor: pointer;
+}
+
+.edit-modal-body {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: var(--spacing-xl, 32px);
+  padding: var(--spacing-lg);
+  overflow-y: auto;
+}
+
+/* Preview */
+.edit-modal-preview {
+  align-self: start;
+  position: sticky;
+  top: 0;
+}
+
+.edit-modal-preview-label,
+.edit-modal-section-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin-bottom: var(--spacing-sm);
+}
+
+.edit-modal-section-label span {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+.edit-modal-preview-card {
+  pointer-events: none;
+}
+
+.edit-modal-preview-description {
+  margin-top: var(--spacing-sm);
+  font-size: 13px;
+  color: #444;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.edit-modal-preview-note {
+  margin-top: var(--spacing-sm);
+  font-size: 12px;
+  color: #b00020;
+}
+
+/* Fields */
+.edit-modal-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  min-width: 0;
+}
+
+.edit-modal-fields label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.edit-modal input[type='text'],
+.edit-modal input[type='number'],
+.edit-modal textarea,
+.edit-modal select {
+  width: 100%;
+  min-width: 0;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--border-color);
+  background-color: #ffffff;
+  font-size: 16px; /* 16px stops iOS zooming into inputs */
+  font-weight: 400;
+  font-family: inherit;
+}
+
+.edit-modal input:focus,
+.edit-modal textarea:focus,
+.edit-modal select:focus {
+  outline: none;
+  border-color: var(--primary-dark);
+}
+
+.edit-modal-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-md);
+}
+
+/* Images */
+.edit-modal-images ul {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.edit-modal-images li {
+  position: relative;
+  border: 1px solid var(--border-color);
+  background-color: var(--secondary-gray);
+}
+
+.edit-modal-images li.is-primary {
+  border: 2px solid var(--primary-dark);
+}
+
+.edit-modal-images img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.edit-modal-primary-badge {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  background-color: var(--primary-dark);
+  color: var(--text-light);
+}
+
+.edit-modal-image-actions {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  padding: 4px;
+}
+
+.edit-modal-image-actions button {
+  flex: 1;
+  min-height: 32px;
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.edit-modal-image-actions button:hover {
+  border-color: var(--primary-dark);
+}
+
+.edit-modal-add-image {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.edit-modal-add-image input {
+  flex: 1;
+}
+
+.edit-modal-add-image .btn-secondary {
+  flex: none;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.edit-modal-hint {
+  font-size: 13px;
+  color: #666;
+  margin-top: var(--spacing-xs);
+}
+
+/* Footer */
+.edit-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-top: 1px solid var(--border-color);
+}
+
+.edit-modal-footer .admin-error {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+.edit-modal-footer .btn-primary,
+.edit-modal-footer .btn-secondary {
+  flex: none;
+}
+
+.edit-modal .btn-secondary:disabled,
+.edit-modal .btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Tablet: preview above the fields */
+@media (max-width: 800px) {
+  .edit-modal-body {
+    grid-template-columns: 1fr;
+  }
+
+  .edit-modal-preview {
+    position: static;
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    column-gap: var(--spacing-md);
+    align-items: start;
+  }
+
+  .edit-modal-preview-label {
+    grid-column: 1 / -1;
+  }
+
+  .edit-modal-preview-card {
+    grid-row: span 2;
+  }
+
+  .edit-modal-preview-card .add-to-cart-btn {
+    display: none;
+  }
+
+  .edit-modal-preview-description {
+    margin-top: 0;
+  }
+
+  .edit-modal-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Phone: full-screen sheet with the buttons pinned to the bottom */
+@media (max-width: 600px) {
+  .edit-modal-backdrop {
+    padding: 0;
+    align-items: stretch;
+  }
+
+  .edit-modal {
+    max-height: none;
+    height: 100dvh;
+    border: none;
+  }
+
+  .edit-modal-body {
+    padding: var(--spacing-md);
+    flex: 1;
+  }
+
+  .edit-modal-header,
+  .edit-modal-footer {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .edit-modal-footer {
+    padding-bottom: calc(var(--spacing-sm) + env(safe-area-inset-bottom));
+  }
+
+  .edit-modal-footer .btn-primary,
+  .edit-modal-footer .btn-secondary {
+    flex: 1;
+  }
+
+  .edit-modal-preview {
+    grid-template-columns: 110px 1fr;
+  }
+
+  .edit-modal-add-image {
+    flex-wrap: wrap;
+  }
+
+  .edit-modal-add-image input {
+    flex-basis: 100%;
+  }
+
+  .edit-modal-add-image .btn-secondary {
+    flex: 1;
+  }
+}
+
+.edit-modal .btn-primary,
+.edit-modal .btn-secondary {
+  width: auto;
+}
+
+.edit-modal-preview .edit-modal-preview-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.edit-modal-lang-toggle {
+  display: inline-flex;
+  border: 1px solid var(--border-color);
+}
+
+.edit-modal-lang-toggle button {
+  background: #ffffff;
+  border: none;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: #666;
+  cursor: pointer;
+}
+
+.edit-modal-lang-toggle button.active {
+  background-color: var(--primary-dark);
+  color: var(--text-light);
+}
+
+.edit-modal-list-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+  border: none;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.edit-modal-list-fields legend {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: var(--spacing-xs);
+}
+
+.edit-modal-list-fields legend span {
+  font-weight: 400;
+  color: #666;
+}
+
+.edit-modal .edit-modal-list-fields label {
+  font-weight: 400;
+  color: #666;
+}
+
+.edit-modal-preview-list {
+  margin-top: var(--spacing-sm);
+  font-size: 12px;
+  color: #444;
+  grid-column: 2;
+}
+
+.edit-modal-preview-list p {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.edit-modal-preview-list ul {
+  padding-left: 1.1em;
+}
+
+@media (max-width: 600px) {
+  .edit-modal-list-fields {
+    grid-template-columns: 1fr;
+  }
+}

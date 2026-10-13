@@ -1,29 +1,39 @@
 import Layout from '../components/Layout'
 import Hero from '../components/Hero'
 import ProductCard from '../components/ProductCard'
+import AutoCarousel from '../components/AutoCarousel'
 import { useProducts } from '../services/products'
+import { useHomeSections } from '../services/homeSections'
+import { Product } from '../types'
+import { useTranslation } from '../stores/languageStore'
 import './Home.css'
 
 export default function HomePage() {
   const { data: allProducts = [], isLoading } = useProducts()
+  const { data: sections, isLoading: sectionsLoading } = useHomeSections()
+  const { t } = useTranslation()
   const products = allProducts.filter((product) => product.status === 'active')
-  const bagProducts = products.filter((product) => product.category === 'bags')
-  const dogProducts = products.filter((product) => product.category === 'dogs')
 
-  const newArrivals = [...bagProducts.slice(0, 2), ...dogProducts.slice(0, 1)].map(
-    (product, index) => ({
-      ...product,
-      badge: index === 0 ? 'New' : undefined,
-    })
-  )
+  // Products picked in the admin panel, in that order; inactive or deleted ones are skipped
+  const picked = (ids: string[] | undefined) =>
+    (ids ?? [])
+      .map((id) => products.find((product) => product.id === id))
+      .filter((product): product is Product => Boolean(product))
 
-  const inEvidence = [...bagProducts.slice(2, 4), ...dogProducts.slice(1, 3)]
+  // With nothing picked yet, fall back to the first products in shop order
+  const pickedNew = picked(sections?.newArrivals)
+  const pickedEvidence = picked(sections?.inEvidence)
+  const newArrivals = (pickedNew.length > 0 ? pickedNew : products.slice(0, 6)).map((product, index) => ({
+    ...product,
+    badge: index === 0 ? t('common.new') : undefined,
+  }))
+  const inEvidence = pickedEvidence.length > 0 ? pickedEvidence : products.slice(6, 12)
 
-  if (isLoading) {
+  if (isLoading || sectionsLoading) {
     return (
       <Layout>
         <div className="container">
-          <p>Loading…</p>
+          <p>{t('common.loading')}</p>
         </div>
       </Layout>
     )
@@ -31,38 +41,33 @@ export default function HomePage() {
 
   return (
     <Layout>
-      <Hero
-        title=""
-        badge="New Collection"
-        backgroundImage="/attachments/hero.jpeg"
-        subtitle="Structured silhouettes, soft textures, and versatile pieces for everyday movement."
-      />
+      <Hero backgroundImage="/attachments/hero.jpeg" />
 
       <section className="home-section feature-section">
         <div className="container">
           <div className="section-header">
-            <p className="section-kicker">Just landed</p>
-            <h2>New arrivals</h2>
+            <p className="section-kicker">{t('home.justLanded')}</p>
+            <h2>{t('home.newArrivals')}</h2>
           </div>
-          <div className="product-grid product-grid--3col" aria-label="New arrivals">
+          <AutoCarousel label={t('home.newArrivals')}>
             {newArrivals.map((product) => (
               <ProductCard key={product.id} {...product} />
             ))}
-          </div>
+          </AutoCarousel>
         </div>
       </section>
 
       <section className="home-section feature-section">
         <div className="container">
           <div className="section-header">
-            <p className="section-kicker">Editors' picks</p>
-            <h2>In evidence</h2>
+            <p className="section-kicker">{t('home.editorsPicks')}</p>
+            <h2>{t('home.inEvidence')}</h2>
           </div>
-          <div className="product-grid product-grid--3col" aria-label="In evidence">
+          <AutoCarousel label={t('home.inEvidence')} interval={5000}>
             {inEvidence.map((product) => (
               <ProductCard key={product.id} {...product} />
             ))}
-          </div>
+          </AutoCarousel>
         </div>
       </section>
     </Layout>

@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { useCartStore } from '../stores/cartStore'
+import { flyHeartToCart } from '../utils/flyToCart'
+import { useTranslation } from '../stores/languageStore'
 import './ProductCard.css'
 
 interface ProductCardProps {
@@ -17,6 +19,7 @@ export default function ProductCard({ id, name, price, image, images, badge }: P
   const [hovered, setHovered] = useState(false)
   const [imageIndex, setImageIndex] = useState(0)
   const { addItem } = useCartStore()
+  const { t } = useTranslation()
 
   const imageSet = images && images.length > 0 ? images : [image]
 
@@ -41,6 +44,7 @@ export default function ProductCard({ id, name, price, image, images, badge }: P
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
     addItem(id, 1)
+    flyHeartToCart(e.currentTarget)
     setShowAddedMessage(true)
     setTimeout(() => setShowAddedMessage(false), 2000)
   }
@@ -55,7 +59,7 @@ export default function ProductCard({ id, name, price, image, images, badge }: P
       >
         <div className="product-image-wrapper">
           {badge && <div className="product-badge">{badge}</div>}
-          <img src={imageSet[imageIndex]} alt={name} className="product-image" />
+          <img src={imageSet[imageIndex]} alt={name} className="product-image" loading="lazy" decoding="async" />
         </div>
         <div className="product-info">
           <h3 className="product-name">{name}</h3>
@@ -63,7 +67,7 @@ export default function ProductCard({ id, name, price, image, images, badge }: P
         </div>
       </Link>
       <button className="add-to-cart-btn" onClick={handleAddToCart}>
-        {showAddedMessage ? '✓ Added' : 'Add to Cart'}
+        {showAddedMessage ? t('common.added') : t('common.addToCart')}
       </button>
     </div>
   )

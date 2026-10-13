@@ -3,11 +3,14 @@ import { useParams, Link } from 'react-router-dom'
 import Layout from '../components/Layout'
 import { useCartStore } from '../stores/cartStore'
 import { useProduct } from '../services/products'
+import { flyHeartToCart } from '../utils/flyToCart'
+import { useTranslation } from '../stores/languageStore'
 import './Product.css'
 
 export default function ProductPage() {
   const { id } = useParams<{ id: string }>()
   const { addItem } = useCartStore()
+  const { t, describe, listItems } = useTranslation()
   const [quantity, setQuantity] = useState(1)
   const [selectedImage, setSelectedImage] = useState(0)
   const [showAddedMessage, setShowAddedMessage] = useState(false)
@@ -19,7 +22,7 @@ export default function ProductPage() {
       <Layout>
         <section className="product-section">
           <div className="container">
-            <p>Loading…</p>
+            <p>{t('common.loading')}</p>
           </div>
         </section>
       </Layout>
@@ -32,9 +35,9 @@ export default function ProductPage() {
         <section className="product-section">
           <div className="container">
             <div className="product-not-found">
-              <h1>Product not found</h1>
-              <p>The product you're looking for doesn't exist.</p>
-              <Link to="/catalog" className="back-link">Back to Catalog</Link>
+              <h1>{t('product.notFound')}</h1>
+              <p>{t('product.notFoundText')}</p>
+              <Link to="/catalog" className="back-link">{t('product.backToCatalog')}</Link>
             </div>
           </div>
         </section>
@@ -42,11 +45,15 @@ export default function ProductPage() {
     )
   }
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     addItem(productData.id, quantity)
+    flyHeartToCart(e.currentTarget)
     setShowAddedMessage(true)
     setTimeout(() => setShowAddedMessage(false), 2000)
   }
+
+  const details = listItems(productData, 'details')
+  const dimensions = listItems(productData, 'dimensions')
 
   const images = productData.images && productData.images.length > 0
     ? productData.images
@@ -68,7 +75,7 @@ export default function ProductPage() {
                     className={`thumbnail ${selectedImage === index ? 'active' : ''}`}
                     onClick={() => setSelectedImage(index)}
                   >
-                    <img src={image} alt={`${productData.name} view ${index + 1}`} />
+                    <img src={image} alt={t('product.view', { name: productData.name, index: index + 1 })} />
                   </button>
                 ))}
               </div>
@@ -81,71 +88,89 @@ export default function ProductPage() {
               </div>
 
               <div className="product-description">
-                <p>{productData.description}</p>
+                <p>{describe(productData)}</p>
               </div>
+
+              {(details.length > 0 || dimensions.length > 0) && (
+                <div className="product-info-lists">
+                  {details.length > 0 && (
+                    <div className="product-info-list">
+                      <h3>{t('product.details')}</h3>
+                      <ul>
+                        {details.map((item, index) => (
+                          <li key={index}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {dimensions.length > 0 && (
+                    <div className="product-info-list">
+                      <h3>{t('product.dimensions')}</h3>
+                      <ul>
+                        {dimensions.map((item, index) => (
+                          <li key={index}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="product-status">
                 {productData.stock > 0 ? (
-                  <span className="in-stock">In Stock ({productData.stock} available)</span>
+                  <span className="in-stock">{t('product.inStock', { count: productData.stock })}</span>
                 ) : (
-                  <span className="out-of-stock">Out of Stock</span>
+                  <span className="out-of-stock">{t('product.outOfStock')}</span>
                 )}
               </div>
 
-              <div className="product-options">
-                <div className="quantity-selector">
-                  <label htmlFor="quantity">Quantity</label>
-                  <div className="quantity-input">
-                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>−</button>
-                    <input
-                      id="quantity"
-                      type="number"
-                      min="1"
-                      value={quantity}
-                      onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                    />
-                    <button onClick={() => setQuantity(quantity + 1)}>+</button>
+              <div className="product-purchase">
+                <div className="product-options">
+                  <div className="quantity-selector">
+                    <label htmlFor="quantity">{t('product.quantity')}</label>
+                    <div className="quantity-input">
+                      <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>−</button>
+                      <input
+                        id="quantity"
+                        type="number"
+                        min="1"
+                        value={quantity}
+                        onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
+                      />
+                      <button onClick={() => setQuantity(quantity + 1)}>+</button>
+                    </div>
                   </div>
+                </div>
+
+                <div className="product-actions">
+                  <button
+                    className="add-to-cart"
+                    onClick={handleAddToCart}
+                    disabled={productData.stock === 0}
+                  >
+                    {showAddedMessage ? t('product.addedToCart') : t('common.addToCart')}
+                  </button>
+                  <button className="wishlist-button" aria-label={t('product.wishlist')}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                  </button>
                 </div>
               </div>
 
-              <div className="product-actions">
-                <button
-                  className="add-to-cart"
-                  onClick={handleAddToCart}
-                  disabled={productData.stock === 0}
-                >
-                  {showAddedMessage ? '✓ Added to Cart' : 'Add to Cart'}
-                </button>
-                <button className="wishlist-button" aria-label="Add to wishlist">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                  </svg>
-                </button>
+              <Link to="/cart" className="go-to-cart">{t('product.goToCart')}</Link>
+
+              <div className="product-info-lists product-info-lists--shipping">
+                <div className="product-info-list">
+                  <h3>{t('product.shippingReturns')}</h3>
+                  <ul>
+                    <li>{t('product.shippingItaly')}</li>
+                    <li>{t('product.shippingItalyFree')}</li>
+                    <li>{t('product.shippingEu')}</li>
+                  </ul>
+                </div>
               </div>
 
-              <Link to="/cart" className="go-to-cart">Go to Cart</Link>
-
-              <div className="product-specifications">
-                <h3>Details</h3>
-                <ul>
-                  <li>Product ID: {productData.id}</li>
-                  <li>Price: ${productData.price.toFixed(2)}</li>
-                  <li>Stock: {productData.stock} available</li>
-                </ul>
-              </div>
-
-              <div className="product-shipping">
-                <h3>Shipping & Returns</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-              </div>
-
-              <div className="product-shipping">
-                <h3>Atelier Notes</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.</p>
-                <p>Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta.</p>
-              </div>
             </div>
           </div>
         </div>

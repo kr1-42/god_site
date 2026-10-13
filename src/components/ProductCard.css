@@ -39,13 +39,15 @@
   margin-bottom: var(--spacing-lg);
   aspect-ratio: 1;
   overflow: hidden;
-  background-color: var(--secondary-gray);
+  /* White blends with the photos' own white/light backgrounds */
+  background-color: #ffffff;
 }
 
+/* Show the whole photo: product shots come in tall, wide and square shapes */
 .product-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   transition: transform 0.4s ease;
 }
 

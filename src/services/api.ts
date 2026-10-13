@@ -19,5 +19,9 @@ export async function apiCall<T>(
     throw new Error(body?.error || `API error: ${response.statusText}`)
   }
 
+  if (response.status === 204) {
+    return undefined as T
+  }
+
   return response.json()
 }

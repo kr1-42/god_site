@@ -1,5 +1,7 @@
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useState } from 'react'
+import { useCategories } from '../services/categories'
+import { useTranslation } from '../stores/languageStore'
 import './Header.css'
 
 export default function Header() {
@@ -8,6 +10,8 @@ export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const navigate = useNavigate()
+  const { data: categories = [] } = useCategories()
+  const { t, language, setLanguage, categoryName } = useTranslation()
   const [searchParams] = useSearchParams()
 
   const toggleMenu = () => {
@@ -31,12 +35,12 @@ export default function Header() {
     setSearchQuery('')
   }
 
-  const handleShopFilter = (category: 'dogs' | 'bags' | 'all') => {
+  const handleShopFilter = (category: string) => {
     setIsShopDropdownOpen(false)
     if (category === 'all') {
       navigate('/catalog')
     } else {
-      navigate(`/catalog?category=${category}`)
+      navigate(`/catalog?category=${encodeURIComponent(category)}`)
     }
   }
 
@@ -45,7 +49,7 @@ export default function Header() {
   return (
     <header className="header">
       <div className="header-content">
-        <button className="menu-toggle" aria-label="Menu" onClick={toggleMenu} aria-expanded={isMenuOpen}>
+        <button className="menu-toggle" aria-label={t('nav.menu')} onClick={toggleMenu} aria-expanded={isMenuOpen}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -64,7 +68,7 @@ export default function Header() {
               onClick={() => setIsShopDropdownOpen(!isShopDropdownOpen)}
               aria-expanded={isShopDropdownOpen}
             >
-              Shop
+              {t('nav.shop')}
               <svg 
                 className="dropdown-arrow" 
                 width="12" 
@@ -84,25 +88,22 @@ export default function Header() {
                   className={`shop-dropdown-item ${currentCategory === 'all' ? 'active' : ''}`}
                   onClick={() => handleShopFilter('all')}
                 >
-                  All Products
+                  {t('nav.allProducts')}
                 </button>
-                <button
-                  className={`shop-dropdown-item ${currentCategory === 'dogs' ? 'active' : ''}`}
-                  onClick={() => handleShopFilter('dogs')}
-                >
-                  Dogs
-                </button>
-                <button
-                  className={`shop-dropdown-item ${currentCategory === 'bags' ? 'active' : ''}`}
-                  onClick={() => handleShopFilter('bags')}
-                >
-                  Bags
-                </button>
+                {categories.map((category) => (
+                  <button
+                    key={category.slug}
+                    className={`shop-dropdown-item ${currentCategory === category.slug ? 'active' : ''}`}
+                    onClick={() => handleShopFilter(category.slug)}
+                  >
+                    {categoryName(category)}
+                  </button>
+                ))}
               </div>
             )}
           </div>
-          <Link to="/catalog" className="nav-link">New</Link>
-          <Link to="/about" className="nav-link">About</Link>
+          <Link to="/catalog" className="nav-link">{t('nav.new')}</Link>
+          <Link to="/about" className="nav-link">{t('nav.about')}</Link>
         </nav>
 
         {isMenuOpen && (
@@ -113,7 +114,7 @@ export default function Header() {
                 onClick={() => setIsShopDropdownOpen(!isShopDropdownOpen)}
                 aria-expanded={isShopDropdownOpen}
               >
-                Shop
+                {t('nav.shop')}
                 <svg 
                   className="dropdown-arrow" 
                   width="12" 
@@ -135,41 +136,47 @@ export default function Header() {
                       closeMenu()
                     }}
                   >
-                    All Products
+                    {t('nav.allProducts')}
                   </button>
-                  <button
-                    className={`mobile-shop-dropdown-item ${currentCategory === 'dogs' ? 'active' : ''}`}
-                    onClick={() => {
-                      handleShopFilter('dogs')
-                      closeMenu()
-                    }}
-                  >
-                    Dogs
-                  </button>
-                  <button
-                    className={`mobile-shop-dropdown-item ${currentCategory === 'bags' ? 'active' : ''}`}
-                    onClick={() => {
-                      handleShopFilter('bags')
-                      closeMenu()
-                    }}
-                  >
-                    Bags
-                  </button>
+                  {categories.map((category) => (
+                    <button
+                      key={category.slug}
+                      className={`mobile-shop-dropdown-item ${currentCategory === category.slug ? 'active' : ''}`}
+                      onClick={() => {
+                        handleShopFilter(category.slug)
+                        closeMenu()
+                      }}
+                    >
+                      {categoryName(category)}
+                    </button>
+                  ))}
                 </div>
               )}
             </div>
-            <Link to="/catalog" className="mobile-nav-link" onClick={closeMenu}>New</Link>
-            <Link to="/about" className="mobile-nav-link" onClick={closeMenu}>About</Link>
+            <Link to="/catalog" className="mobile-nav-link" onClick={closeMenu}>{t('nav.new')}</Link>
+            <Link to="/about" className="mobile-nav-link" onClick={closeMenu}>{t('nav.about')}</Link>
           </nav>
         )}
 
         <div className="header-actions">
+          <div className="language-toggle" role="group" aria-label={t('nav.language')}>
+            {(['en', 'it'] as const).map((lang) => (
+              <button
+                key={lang}
+                className={language === lang ? 'active' : undefined}
+                aria-pressed={language === lang}
+                onClick={() => setLanguage(lang)}
+              >
+                {lang.toUpperCase()}
+              </button>
+            ))}
+          </div>
           {isSearchOpen && (
             <form className="search-form" onSubmit={handleSearchSubmit}>
               <input
                 type="search"
                 className="search-input"
-                placeholder="Search products..."
+                placeholder={t('nav.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
                 autoFocus
@@ -178,7 +185,7 @@ export default function Header() {
           )}
           <button
             className={`icon-button ${isSearchOpen ? 'active' : ''}`}
-            aria-label="Search"
+            aria-label={t('nav.search')}
             aria-expanded={isSearchOpen}
             onClick={toggleSearch}
           >
@@ -187,7 +194,7 @@ export default function Header() {
               <path d="m21 21-4.35-4.35"></path>
             </svg>
           </button>
-          <Link to="/cart" className="icon-button" aria-label="Cart">
+          <Link to="/cart" className="icon-button" aria-label={t('nav.cart')} data-cart-icon>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="9" cy="21" r="1"></circle>
               <circle cx="20" cy="21" r="1"></circle>

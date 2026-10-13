@@ -4,6 +4,7 @@ import Layout from '../components/Layout'
 import { useCartStore } from '../stores/cartStore'
 import { Product } from '../types'
 import { useProducts } from '../services/products'
+import { useTranslation } from '../stores/languageStore'
 import './checkout.css'
 
 type Step = 'shipping' | 'payment' | 'review' | 'confirmation'
@@ -29,6 +30,7 @@ interface PaymentInfo {
 export default function CheckoutPage() {
   const navigate = useNavigate()
   const { items, clearCart } = useCartStore()
+  const { t } = useTranslation()
   const { data: allProducts = [] } = useProducts()
   const [currentStep, setCurrentStep] = useState<Step>('shipping')
   const [shippingInfo, setShippingInfo] = useState<ShippingInfo>({
@@ -127,10 +129,10 @@ export default function CheckoutPage() {
 
   const steps: Step[] = ['shipping', 'payment', 'review', 'confirmation']
   const stepLabels = {
-    shipping: 'Shipping',
-    payment: 'Payment',
-    review: 'Review',
-    confirmation: 'Confirmation',
+    shipping: t('checkout.step.shipping'),
+    payment: t('checkout.step.payment'),
+    review: t('checkout.step.review'),
+    confirmation: t('checkout.step.confirmation'),
   }
 
   return (
@@ -139,7 +141,7 @@ export default function CheckoutPage() {
         <div className="container">
           {currentStep !== 'confirmation' && (
             <>
-              <h1>Checkout</h1>
+              <h1>{t('checkout.title')}</h1>
               <div className="checkout-progress">
                 {steps.slice(0, 3).map((step, index) => (
                   <div key={step} className="progress-item">
@@ -160,26 +162,26 @@ export default function CheckoutPage() {
             <div className="checkout-form">
               {currentStep === 'shipping' && (
                 <div className="form-section">
-                  <h2>Shipping Address</h2>
+                  <h2>{t('checkout.shippingAddress')}</h2>
                   <div className="form-grid">
                     <input
                       type="text"
                       name="firstName"
-                      placeholder="First Name"
+                      placeholder={t('checkout.firstName')}
                       value={shippingInfo.firstName}
                       onChange={handleShippingChange}
                     />
                     <input
                       type="text"
                       name="lastName"
-                      placeholder="Last Name"
+                      placeholder={t('checkout.lastName')}
                       value={shippingInfo.lastName}
                       onChange={handleShippingChange}
                     />
                     <input
                       type="email"
                       name="email"
-                      placeholder="Email"
+                      placeholder={t('checkout.email')}
                       value={shippingInfo.email}
                       onChange={handleShippingChange}
                       style={{ gridColumn: '1 / -1' }}
@@ -187,7 +189,7 @@ export default function CheckoutPage() {
                     <input
                       type="tel"
                       name="phone"
-                      placeholder="Phone Number"
+                      placeholder={t('checkout.phone')}
                       value={shippingInfo.phone}
                       onChange={handleShippingChange}
                       style={{ gridColumn: '1 / -1' }}
@@ -195,7 +197,7 @@ export default function CheckoutPage() {
                     <input
                       type="text"
                       name="address"
-                      placeholder="Street Address"
+                      placeholder={t('checkout.address')}
                       value={shippingInfo.address}
                       onChange={handleShippingChange}
                       style={{ gridColumn: '1 / -1' }}
@@ -203,21 +205,21 @@ export default function CheckoutPage() {
                     <input
                       type="text"
                       name="city"
-                      placeholder="City"
+                      placeholder={t('checkout.city')}
                       value={shippingInfo.city}
                       onChange={handleShippingChange}
                     />
                     <input
                       type="text"
                       name="state"
-                      placeholder="State"
+                      placeholder={t('checkout.state')}
                       value={shippingInfo.state}
                       onChange={handleShippingChange}
                     />
                     <input
                       type="text"
                       name="zipCode"
-                      placeholder="ZIP Code"
+                      placeholder={t('checkout.zip')}
                       value={shippingInfo.zipCode}
                       onChange={handleShippingChange}
                     />
@@ -227,12 +229,12 @@ export default function CheckoutPage() {
 
               {currentStep === 'payment' && (
                 <div className="form-section">
-                  <h2>Payment Method</h2>
+                  <h2>{t('checkout.paymentMethod')}</h2>
                   <div className="form-grid">
                     <input
                       type="text"
                       name="cardName"
-                      placeholder="Cardholder Name"
+                      placeholder={t('checkout.cardName')}
                       value={paymentInfo.cardName}
                       onChange={handlePaymentChange}
                       style={{ gridColumn: '1 / -1' }}
@@ -249,7 +251,7 @@ export default function CheckoutPage() {
                     <input
                       type="text"
                       name="expiryDate"
-                      placeholder="MM/YY"
+                      placeholder={t('checkout.expiry')}
                       value={paymentInfo.expiryDate}
                       onChange={handlePaymentChange}
                       maxLength={5}
@@ -257,7 +259,7 @@ export default function CheckoutPage() {
                     <input
                       type="text"
                       name="cvv"
-                      placeholder="CVV"
+                      placeholder={t('checkout.cvv')}
                       value={paymentInfo.cvv}
                       onChange={handlePaymentChange}
                       maxLength={3}
@@ -269,7 +271,7 @@ export default function CheckoutPage() {
               {currentStep === 'review' && (
                 <div className="form-section">
                   <div className="review-section">
-                    <h2>Shipping Address</h2>
+                    <h2>{t('checkout.shippingAddress')}</h2>
                     <div className="review-content">
                       <p>{shippingInfo.firstName} {shippingInfo.lastName}</p>
                       <p>{shippingInfo.address}</p>
@@ -280,10 +282,10 @@ export default function CheckoutPage() {
                   </div>
 
                   <div className="review-section">
-                    <h2>Payment Method</h2>
+                    <h2>{t('checkout.paymentMethod')}</h2>
                     <div className="review-content">
                       <p>{paymentInfo.cardName}</p>
-                      <p>Card ending in {paymentInfo.cardNumber.slice(-4)}</p>
+                      <p>{t('checkout.cardEnding', { digits: paymentInfo.cardNumber.slice(-4) })}</p>
                     </div>
                   </div>
                 </div>
@@ -292,16 +294,16 @@ export default function CheckoutPage() {
               {currentStep === 'confirmation' && (
                 <div className="confirmation-section">
                   <div className="confirmation-icon">✓</div>
-                  <h2>Order Confirmed</h2>
-                  <p className="confirmation-number">Order Number: <strong>{orderNumber}</strong></p>
+                  <h2>{t('checkout.confirmed')}</h2>
+                  <p className="confirmation-number">{t('checkout.orderNumber')} <strong>{orderNumber}</strong></p>
                   <p className="confirmation-message">
-                    Thank you for your purchase! A confirmation email has been sent to <strong>{shippingInfo.email}</strong>
+                    {t('checkout.thankYou')} <strong>{shippingInfo.email}</strong>
                   </p>
                   <div className="confirmation-details">
-                    <p>We'll notify you when your order ships.</p>
+                    <p>{t('checkout.notify')}</p>
                   </div>
                   <button className="continue-button" onClick={() => navigate('/catalog')}>
-                    Continue Shopping
+                    {t('common.continueShopping')}
                   </button>
                 </div>
               )}
@@ -309,13 +311,13 @@ export default function CheckoutPage() {
 
             {/* Order Summary Sidebar */}
             <div className="checkout-summary">
-              <h2>Order Summary</h2>
+              <h2>{t('common.orderSummary')}</h2>
               <div className="summary-items">
                 {cartItemsWithProduct.map(item => (
                   <div key={item.id} className="summary-item">
                     <div className="summary-item-details">
                       <p className="summary-item-name">{item.name}</p>
-                      <p className="summary-item-qty">Qty: {item.quantity}</p>
+                      <p className="summary-item-qty">{t('checkout.qty', { count: item.quantity })}</p>
                     </div>
                     <p className="summary-item-price">${(item.price * item.quantity).toFixed(2)}</p>
                   </div>
@@ -324,19 +326,19 @@ export default function CheckoutPage() {
 
               <div className="summary-totals">
                 <div className="totals-row">
-                  <span>Subtotal</span>
+                  <span>{t('common.subtotal')}</span>
                   <span>${subtotal.toFixed(2)}</span>
                 </div>
                 <div className="totals-row">
-                  <span>Shipping</span>
+                  <span>{t('common.shipping')}</span>
                   <span>${shipping.toFixed(2)}</span>
                 </div>
                 <div className="totals-row">
-                  <span>Tax</span>
+                  <span>{t('common.tax')}</span>
                   <span>${tax.toFixed(2)}</span>
                 </div>
                 <div className="totals-total">
-                  <span>Total</span>
+                  <span>{t('common.total')}</span>
                   <span>${total.toFixed(2)}</span>
                 </div>
               </div>
@@ -345,7 +347,7 @@ export default function CheckoutPage() {
                 <div className="checkout-actions">
                   {currentStep !== 'shipping' && (
                     <button className="btn-secondary" onClick={handlePrevStep}>
-                      Back
+                      {t('checkout.back')}
                     </button>
                   )}
                   <button
@@ -356,7 +358,7 @@ export default function CheckoutPage() {
                       (currentStep === 'payment' && !validatePayment())
                     }
                   >
-                    {currentStep === 'review' ? 'Complete Order' : 'Continue'}
+                    {currentStep === 'review' ? t('checkout.complete') : t('checkout.continue')}
                   </button>
                 </div>
               )}
